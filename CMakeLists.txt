@@ -25,6 +25,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
+# Static Linking Option.
+option(link_static "Link statically" NO)
+if (link_static)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--whole-archive -lpthread")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--no-whole-archive")
+endif()
+
 # Includes
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
@@ -42,6 +50,10 @@ target_link_libraries(${LIB_NAME} gflags)
 # GLog
 find_package(glog REQUIRED)
 target_link_libraries(${LIB_NAME} glog)
+
+# Threads
+find_package(Threads REQUIRED)
+target_link_libraries(${LIB_NAME} ${CMAKE_THREAD_LIBS_INIT})
 
 # Main Executable
 file(GLOB MAIN_SOURCES "${MAIN_DIR}/*.${CC_EXT}")
